@@ -501,4 +501,44 @@ describe('KeyHandlerPlugin — deep behavioral coverage', () => {
 		dispatch('MediaTrackPrevious');
 		expect(prevFn).toHaveBeenCalledOnce();
 	});
+
+	it('hands the KeyboardEvent to a binding so it can stop the browser default', async () => {
+		const mockPlayer = makePlayer('kh-event-arg').setup({});
+		let seen: KeyboardEvent | undefined;
+		mockPlayer.addPlugin(KeyHandlerPlugin, {
+			cooldownMs: 0,
+			bindings: {
+				' ': (_player, keyboardEvent) => {
+					seen = keyboardEvent;
+					keyboardEvent.preventDefault();
+				},
+			},
+		});
+		await mockPlayer.ready();
+
+		const ev = new KeyboardEvent('keydown', {
+			key: ' ',
+			bubbles: true,
+			cancelable: true,
+		});
+		document.dispatchEvent(ev);
+
+		expect(seen).toBeInstanceOf(KeyboardEvent);
+		expect(ev.defaultPrevented).toBe(true);
+	});
+
+	it('hands the KeyboardEvent to a binding registered through bind()', async () => {
+		const mockPlayer = makePlayer('kh-event-bind').setup({});
+		mockPlayer.addPlugin(KeyHandlerPlugin, { cooldownMs: 0 });
+		await mockPlayer.ready();
+
+		const handler = vi.fn();
+		const keys = mockPlayer.getPlugin(KeyHandlerPlugin) as KeyHandlerPlugin;
+		keys.bind('k', handler);
+
+		dispatch('k');
+
+		expect(handler).toHaveBeenCalledOnce();
+		expect(handler.mock.calls[0]![1]).toBeInstanceOf(KeyboardEvent);
+	});
 });

@@ -59,11 +59,12 @@ export const authMethods = {
 	 * (`credentials`, `headers`, `transformUrl`, `signRequest`,
 	 * `refreshOnUnauthenticated`, `retryAfterRefresh`) are retained.
 	 *
-	 * `auth(config)` — replace the auth config wholesale; old fields are gone.
-	 * Emits `auth:refreshed` so listeners (cached fetchers, telemetry) re-resolve.
+	 * `auth(config)` — shallow-merge onto the current auth config; fields not
+	 * named are retained. Emits `auth:refreshed` so listeners (cached fetchers,
+	 * telemetry) re-resolve. To drop a field, call `auth(null)` first.
 	 *
-	 * `auth(partial)` — shallow-merge updates onto the current auth config;
-	 * fields not specified are retained. Emits `auth:refreshed`.
+	 * `auth(partial)` — identical: `AuthConfig` and `Partial<AuthConfig>` are
+	 * structurally the same type, so both forms take the merge path.
 	 *
 	 * `auth(null)` — clear the auth config entirely. Emits `auth:refreshed`.
 	 */

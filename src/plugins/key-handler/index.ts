@@ -14,9 +14,10 @@ import { Plugin } from '../../core/plugin';
  *
  * Keys are combo strings such as `'Space'`, `'ArrowLeft'`, `'shift+ArrowLeft'`,
  * `'ctrl+k'`. Values receive the player instance so they can call any public
- * method directly.
+ * method directly, and the `KeyboardEvent` so they can call `preventDefault()`
+ * on keys the browser also acts on.
  */
-export type KeyBindings<P> = Record<string, (player: P) => void>;
+export type KeyBindings<P> = Record<string, (player: P, keyboardEvent: KeyboardEvent) => void>;
 
 /** Options for {@link KeyHandlerPlugin}. */
 export interface KeyHandlerOptions<P> {
@@ -33,7 +34,7 @@ export interface KeyHandlerOptions<P> {
 
 	/**
 	 * Extra bindings merged on top of the default group bindings. Each key is a
-	 * combo string; the value is a `(player) => void` callback. When the same
+	 * combo string; the value is a `(player, keyboardEvent) => void` callback. When the same
 	 * combo appears in both defaults and here, this map wins.
 	 */
 	bindings?: KeyBindings<P>;
@@ -190,14 +191,18 @@ export class KeyHandlerPlugin<P extends IPlayer<BaseEventMap> = IPlayer> extends
 	 *
 	 * ```ts
 	 * keyHandler.bind('shift+ArrowLeft', (player) => player.rewind(30));
+	 * keyHandler.bind('Space', (player, event) => {
+	 *   event.preventDefault();
+	 *   player.togglePlayback();
+	 * });
 	 * ```
 	 *
 	 * Registering the same combo again replaces the previous handler. Combo
 	 * strings are normalised before storage — `'Shift+arrowleft'` and
 	 * `'shift+ArrowLeft'` resolve to the same entry.
 	 */
-	bind(combo: string, fn: (player: P) => void): void {
-		this._bindings.set(this.normalizeCombo(combo), () => fn(this.player));
+	bind(combo: string, fn: (player: P, keyboardEvent: KeyboardEvent) => void): void {
+		this._bindings.set(this.normalizeCombo(combo), (keyboardEvent: KeyboardEvent) => fn(this.player, keyboardEvent));
 	}
 
 	/**
@@ -213,7 +218,7 @@ export class KeyHandlerPlugin<P extends IPlayer<BaseEventMap> = IPlayer> extends
 	 * provided as a semantic alias for callers that want to communicate intent
 	 * (swapping, not adding).
 	 */
-	replace(combo: string, fn: (player: P) => void): void {
+	replace(combo: string, fn: (player: P, keyboardEvent: KeyboardEvent) => void): void {
 		this.bind(combo, fn);
 	}
 
