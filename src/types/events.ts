@@ -280,9 +280,10 @@ export interface BaseEventMap<I extends BasePlaylistItem = BasePlaylistItem> {
 	'queue:sort': void;
 
 	/**
-	 * Fires when the last item in a non-repeating queue ends naturally.
-	 * Fires regardless of whether an auto-advance plugin is registered —
-	 * consumers receive the "playlist done" signal unconditionally.
+	 * Fires from `next()` when there is nothing to move to: the end of a
+	 * non-repeating queue, or an empty queue under any repeat mode. A track
+	 * ending on its own does not reach it, because nothing calls `next()`
+	 * without an auto-advance plugin registered.
 	 */
 	'queue:exhausted': void;
 
