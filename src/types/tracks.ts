@@ -55,7 +55,10 @@ export interface QualityLevel {
  * active backend from the manifest's audio rendition list.
  */
 export interface AudioTrack {
-	/** Stable track identifier within this manifest. Pass to `audioTrack(id)`. */
+	/**
+	 * Stable track identifier within this manifest. NOT what `audioTrack()`
+	 * takes: that argument is a position in the list `audioTracks()` returned.
+	 */
 	id: string;
 	/** BCP-47 language tag, if the manifest provides one (e.g. `'en'`, `'nl-NL'`). */
 	language?: string;
