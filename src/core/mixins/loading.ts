@@ -78,8 +78,9 @@ export const loadingMethods = {
 	 * others the kit falls back to a post-load seek. `opts.fadeIn` — ramp
 	 * volume from 0 to the current level over this many seconds.
 	 *
-	 * Emits `mediaReady` after a successful load. On failure the error
-	 * propagates via the `error` event AND re-throws.
+	 * Emits `mediaReady` after a successful load. On failure it re-throws.
+	 * Nothing is emitted: an undecodable source reaches no severity channel,
+	 * and `playState()` stays where it was.
 	 *
 	 * @throws when `item.url` is missing or the backend is not wired.
 	 */

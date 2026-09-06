@@ -249,8 +249,9 @@ export interface BaseEventMap<I extends BasePlaylistItem = BasePlaylistItem> {
 	'playbackRatePrevented': { reason: PreventedReason; cause?: unknown };
 
 	// ── Error severity tiers ──────────────────────────────────────────────────
-	// `fatal` = unrecoverable, player is shutting down.
-	// `error` = recoverable problem (e.g. a sidecar failed to load).
+	// `fatal` = unrecoverable; the only thing the kit does is flip the play
+	// state to `ERROR`, in `container-class-emit`.
+	// `error` = recoverable problem (e.g. `core:resource/playlist-fetch-failed`).
 	// `warning` / `info` = observability only.
 
 	'fatal': PlayerErrorEvent;
