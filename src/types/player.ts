@@ -8,7 +8,7 @@
 
 import type { ICueParser } from '../adapters/cue-parser/ICueParser';
 import type { IPlatform } from '../adapters/platform/browser';
-import type { IStreamFactory } from '../adapters/stream/IStreamSource';
+import type { IStreamFactory, IStreamSource } from '../adapters/stream/IStreamSource';
 import type { DispatchTarget } from '../core/dispatch';
 import type { RepeatState, ShuffleState } from '../core/mixins/state-mutators';
 
@@ -897,6 +897,15 @@ export interface IPlayer<E extends BaseEventMap<any> = BaseEventMap>
 	 * Returns the player for chaining.
 	 */
 	registerStream(factory: IStreamFactory, prepend?: boolean): this;
+
+	/**
+	 * Ask whether a factory you registered claims this URL, skipping the
+	 * built-in `native` and `hls` entries. Returns `undefined` when none does.
+	 *
+	 * A backend calls this before its own HLS and progressive handling, which is
+	 * what makes `registerStream` reach playback.
+	 */
+	resolveCustomStream?(url: string, contentType?: string): IStreamSource | undefined;
 
 	// ── Device / ABR ──
 

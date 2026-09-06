@@ -15,6 +15,9 @@ import type {
 
 import { StreamError } from '../../errors';
 
+/** Ids the kit registers itself. A backend handles these without the registry. */
+const BUILT_IN_STREAM_IDS = new Set(['native', 'hls']);
+
 /**
  * Per-player catalogue of stream factories and content interceptors.
  *
@@ -87,6 +90,34 @@ export class StreamRegistry {
 				contentType: opts.contentType,
 			},
 		});
+	}
+
+	/**
+	 * Resolve only against factories a consumer registered, skipping the
+	 * built-in `native` and `hls` entries, and return `undefined` rather than
+	 * throwing when none of them claims the URL.
+	 *
+	 * A backend that already handles HLS and progressive files itself calls this
+	 * to find out whether a consumer has registered something for a URL it would
+	 * otherwise hand straight to the media element. That keeps the built-in path
+	 * byte-identical for every existing player and stops `registerStream` from
+	 * being a call that registers a factory nothing ever asks.
+	 */
+	resolveCustom(opts: StreamFactoryOptions): IStreamSource | undefined {
+		for (let i = this.factories.length - 1; i >= 0; i--) {
+			const factory = this.factories[i];
+			if (!factory || BUILT_IN_STREAM_IDS.has(factory.id))
+				continue;
+
+			if (factory.canPlay(opts.url, opts.contentType, opts.capabilities)) {
+				return factory.create({
+					...opts,
+					registry: this,
+				});
+			}
+		}
+
+		return undefined;
 	}
 
 	/** `true` if a factory with the given `id` is registered. */

@@ -6,7 +6,7 @@
 //  SPDX-License-Identifier: Apache-2.0
 // -----------------------------------------------------------------------------
 
-import type { IStreamFactory } from '../../adapters/stream/IStreamSource';
+import type { IStreamFactory, IStreamSource } from '../../adapters/stream/IStreamSource';
 import type { Internals } from '../state';
 
 import { StreamRegistry } from '../../adapters/stream/registry';
@@ -68,6 +68,18 @@ export const streamRegistrationMethods = {
 	/** Snapshot of registered factory ids in resolution order (highest-priority first). */
 	streams(this: Internals): ReadonlyArray<string> {
 		return _ensureStreamRegistry(this).list();
+	},
+	/**
+	 * Ask the registry whether a consumer registered a factory that claims this
+	 * URL, skipping the built-in `native` and `hls` entries and returning
+	 * `undefined` when none does.
+	 *
+	 * A backend calls this before its own HLS and progressive handling. Without
+	 * it the registry is seeded at setup and never asked, which makes
+	 * `registerStream` a call that records a factory nothing consults.
+	 */
+	resolveCustomStream(this: Internals, url: string, contentType?: string): IStreamSource | undefined {
+		return _ensureStreamRegistry(this).resolveCustom({ url, contentType });
 	},
 	/** Look up a registered factory by id. Returns `undefined` when not found. */
 	getStreamFactory(this: Internals, id: string): IStreamFactory | undefined {

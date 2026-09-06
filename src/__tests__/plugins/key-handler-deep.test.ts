@@ -508,7 +508,7 @@ describe('KeyHandlerPlugin — deep behavioral coverage', () => {
 		mockPlayer.addPlugin(KeyHandlerPlugin, {
 			cooldownMs: 0,
 			bindings: {
-				' ': (_player, keyboardEvent) => {
+				' ': (_player: unknown, keyboardEvent: KeyboardEvent) => {
 					seen = keyboardEvent;
 					keyboardEvent.preventDefault();
 				},
