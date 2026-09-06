@@ -288,9 +288,9 @@ export interface BaseEventMap<I extends BasePlaylistItem = BasePlaylistItem> {
 	'queue:exhausted': void;
 
 	// ── Backlog / history ─────────────────────────────────────────────────────
-	// Items already played are tracked in a separate MediaList<T>. `next()`
-	// pushes the current item onto the backlog before advancing; `previous()`
-	// pops the backlog top back to current.
+	// A separate MediaList<T> the consumer owns. Transport never touches it:
+	// `next()` and `previous()` do not reference `_backlogList` at all, so a
+	// history is built by calling the backlog methods on `queue.ts` directly.
 
 	'backlog': I[];
 	'backlog:append': { items: I[] };
