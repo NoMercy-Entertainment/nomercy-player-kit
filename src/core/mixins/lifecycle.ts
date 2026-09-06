@@ -1146,6 +1146,19 @@ function _resolveTransitionBackend(player: Internals): ITransitionBackend | null
 }
 
 /**
+ * The channel a failed setup stage reports on.
+ *
+ * The tier comes from the error rather than from the call site. A stage that
+ * throws a `fatal` PlayerError reached a state the player cannot continue from,
+ * and sending that to the `error` channel puts it in front of listeners handling
+ * recoverable trouble while the `fatal` listener, which is the one that tears the
+ * interface down, never hears about it.
+ */
+export function stageErrorTier(error: { severity?: string }): 'error' | 'fatal' {
+	return error.severity === 'fatal' ? 'fatal' : 'error';
+}
+
+/**
  * Run a setup stage. Emits the success event on completion; on failure emits
  * the matching `<stage>Error` event AND a severity-tier `error`/`fatal` event,
  * then re-throws so the pipeline driver can bail.
@@ -1180,9 +1193,15 @@ async function _runStage(
 					message: raw.message,
 					cause: raw,
 				});
-		const payload = makePlayerErrorEvent(error, 'error', { kind: 'core' });
+		// The tier comes from the error rather than from this call site. A stage
+		// that throws a `fatal` PlayerError reached a state the player cannot
+		// continue from, and sending that to the `error` channel puts it in front
+		// of listeners handling recoverable trouble while the `fatal` listener,
+		// which is the one that tears the UI down, never hears about it.
+		const tier = stageErrorTier(error);
+		const payload = makePlayerErrorEvent(error, tier, { kind: 'core' });
 		self.emit(errorEvent, payload);
-		self.emit('error', payload);
+		self.emit(tier, payload);
 		throw err;
 	}
 }
