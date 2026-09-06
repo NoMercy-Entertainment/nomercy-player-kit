@@ -277,7 +277,7 @@ export interface BasePlayerConfig {
 	platform?: IPlatform;
 
 	/**
-	 * Custom cue parsers registered before the kit's defaults (LRC, VTT,
+	 * Custom cue parsers registered after the kit's defaults (LRC, VTT,
 	 * sprite-VTT). Use this for TTML, SRT, ASS-as-cues, or proprietary
 	 * formats. Most-recently-registered wins, so consumer parsers can override
 	 * built-ins for the same URL pattern.

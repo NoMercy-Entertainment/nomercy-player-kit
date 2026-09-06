@@ -102,7 +102,12 @@ export const timeMethods = {
 	},
 
 	/**
-	 * How many seconds of media are buffered ahead of the current position.
+	 * The absolute timeline position, in seconds, that buffered data reaches.
+	 *
+	 * Not a distance ahead of the playhead: it shares a frame of reference with
+	 * `currentTime()` and `duration()`, which is why a scrubber draws its
+	 * buffered bar as `buffered() / duration()`.
+	 *
 	 * Delegates to the backend; returns 0 when no backend is registered.
 	 */
 	buffered(this: Internals): number {

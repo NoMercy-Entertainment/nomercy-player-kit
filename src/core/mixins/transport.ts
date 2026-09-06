@@ -83,7 +83,7 @@ async function _loadAndPlay(
 	// Same reason as the autoplay continuation in queue.ts item(): a browser
 	// that refuses playback without a gesture rejects here, nobody awaits it,
 	// and a bare call leaves an unhandled rejection in the console.
-	void self.play({ source: data.source }).catch(() => { /* surfaces via 'error' */ });
+	void self.play({ source: data.source }).catch(() => { /* surfaces via playPrevented */ });
 }
 
 // ──────────────────────────────────────────────────────────────────────────

@@ -27,7 +27,7 @@ export interface TimeState {
 	position: number;
 	/** Total duration of the active item (seconds). `0` when unknown. */
 	duration: number;
-	/** How far ahead the buffer extends from the current position (seconds). */
+	/** The absolute timeline position buffered data reaches (seconds), on the same scale as `currentTime` and `duration`. */
 	buffered: number;
 	/** Seconds remaining until the end of the item. */
 	remaining: number;

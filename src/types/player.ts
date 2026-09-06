@@ -122,7 +122,7 @@ export type ActionSource = typeof ACTION_SOURCE[keyof typeof ACTION_SOURCE] | (s
  * lifecycle events.
  */
 export interface ActionOptions {
-	/** Who triggered this action. Defaults to `'user'`. */
+	/** Who triggered this action. Passed through untouched, with no default applied. */
 	source?: ActionSource;
 	/**
 	 * When `true`, the action skips emitting the corresponding lifecycle event
@@ -650,7 +650,7 @@ export interface IPlayer<E extends BaseEventMap<any> = BaseEventMap>
 
 	/**
 	 * Start or resume playback.
-	 * `opts.source` defaults to `'user'`. `opts.silent` skips lifecycle events.
+	 * `opts.source` is passed through to every event this raises.
 	 */
 	play(opts?: ActionOptions): Promise<void>;
 
