@@ -1160,8 +1160,8 @@ export function stageErrorTier(error: { severity?: string }): 'error' | 'fatal' 
 
 /**
  * Run a setup stage. Emits the success event on completion; on failure emits
- * the matching `<stage>Error` event AND a severity-tier `error`/`fatal` event,
- * then re-throws so the pipeline driver can bail.
+ * the matching `<stage>Error` event AND `error`, always `error` and never
+ * `fatal`, then re-throws so the pipeline driver can bail.
  */
 async function _runStage(
 	self: Internals,
