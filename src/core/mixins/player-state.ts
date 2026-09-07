@@ -169,6 +169,13 @@ export const playerStateMethods = {
 	 * as not-prevented.
 	 */
 	async _dispatchBefore<TData>(this: Internals, beforeEvent: string, data: TData): Promise<BeforeDispatchOutcome<TData>> {
+		// A silent action is a programmatic state restore, not user intent. It
+		// skips the guard as well as the event, because a listener that cancels
+		// `beforePlay` is answering a user, and this is not one.
+		if ((data as { silent?: boolean } | null)?.silent === true) {
+			return { prevented: false, data } as BeforeDispatchOutcome<TData>;
+		}
+
 		const timeoutMs = this.options?.beforeEventTimeoutMs;
 		return runDispatchBefore<TData>(this, beforeEvent, data, timeoutMs !== undefined ? { timeoutMs } : undefined);
 	},

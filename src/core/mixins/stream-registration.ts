@@ -9,6 +9,8 @@
 import type { IStreamFactory, IStreamSource } from '../../adapters/stream/IStreamSource';
 import type { Internals } from '../state';
 
+import { hlsFactory } from '../../adapters/stream/hls';
+import { nativeFactory } from '../../adapters/stream/native';
 import { StreamRegistry } from '../../adapters/stream/registry';
 
 /**
@@ -37,6 +39,13 @@ export interface StreamRegistrationState {
 function _ensureStreamRegistry(self: Internals): StreamRegistry {
 	if (!self._streamRegistry) {
 		self._streamRegistry = new StreamRegistry();
+		// Seeded here rather than only at `streamsReady`, because resolution walks
+		// newest-first: a factory registered before setup would otherwise be
+		// pushed below the built-ins the moment setup seeded them, and lose to
+		// them for the URLs it was registered to claim.
+		self._streamRegistry.register(nativeFactory);
+		self._streamRegistry.register(hlsFactory);
+
 	}
 	return self._streamRegistry;
 }

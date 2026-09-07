@@ -15,7 +15,7 @@ It carries everything that is not specific to video or audio: the queue, auth, t
 Nothing renders a UI on its own. Nothing is forced on you.
 
 - **Everything is opt-in.** No plugin runs until you `addPlugin` it. The engine ships quiet, you add only what you want.
-- **Swap any behavior through adapters.** The clock, fetch, storage, logger, retry policy, shuffle, URL resolver, stream registry, and more are each an interface with a default. Pass your own to `setup()`. No subclassing.
+- **Swap any behavior through adapters.** Storage, logger, translator, cue parsers, preload and transition strategies, the shuffle strategy, the URL resolver and the stream registry are each an interface with a default. Pass your own in `setup()`, or register it at runtime where the surface allows. No subclassing.
 - **Plain events and methods.** The engine reports through a typed event bus. How you react, and what you build, is yours.
 
 You rarely install this package directly.

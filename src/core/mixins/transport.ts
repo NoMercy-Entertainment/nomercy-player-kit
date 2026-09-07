@@ -142,7 +142,8 @@ export const transportMethods = {
 		if (this._phase === 'ready' || this._phase === 'paused') {
 			this._transitionPhase('starting');
 		}
-		this.emit('play', result.data);
+		if (!result.data.silent)
+			this.emit('play', result.data);
 
 		try {
 			await this._resolveBackend()?.play?.();
@@ -185,7 +186,8 @@ export const transportMethods = {
 		if (this._phase === 'playing' || this._phase === 'starting') {
 			this._transitionPhase('paused');
 		}
-		this.emit('pause', result.data);
+		if (!result.data.silent)
+			this.emit('pause', result.data);
 
 		this._resolveBackend()?.pause?.();
 	},
@@ -208,7 +210,8 @@ export const transportMethods = {
 		}
 		this._playState = PlayState.STOPPED;
 		this._transitionPhase('stopped');
-		this.emit('stop', result.data);
+		if (!result.data.silent)
+			this.emit('stop', result.data);
 
 		this._resolveBackend()?.stop?.();
 	},
@@ -255,7 +258,8 @@ export const transportMethods = {
 				this.emit('queue:exhausted');
 				return;
 			}
-			this.emit('next', result.data);
+			if (!result.data.silent)
+				this.emit('next', result.data);
 			await _loadAndPlay(this, currentItem, result.data ?? {});
 			return;
 		}
@@ -270,7 +274,8 @@ export const transportMethods = {
 					this.emit('queue:exhausted');
 					return;
 				}
-				this.emit('next', result.data);
+				if (!result.data.silent)
+					this.emit('next', result.data);
 				this._queueList.setCurrent(0);
 				await _loadAndPlay(this, firstItem, result.data ?? {});
 				return;
@@ -280,7 +285,8 @@ export const transportMethods = {
 			return;
 		}
 
-		this.emit('next', result.data);
+		if (!result.data.silent)
+			this.emit('next', result.data);
 
 		// Cursor moves BEFORE the media switch — same order as item() — so
 		// `current` fires immediately and the UI (title, poster, playlist
@@ -312,7 +318,8 @@ export const transportMethods = {
 			return;
 		}
 
-		this.emit('previous', result.data);
+		if (!result.data.silent)
+			this.emit('previous', result.data);
 
 		// Cursor moves before the media switch — see next().
 		this._queueList.setCurrent(prevItem);

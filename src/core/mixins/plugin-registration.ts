@@ -10,6 +10,8 @@ import type { IPlayer, PluginCtorWithId } from '../../types';
 import type { Plugin } from '../plugin';
 import type { Internals } from '../state';
 import { LifecycleRegistry } from '../../adapters/lifecycle-registry/default';
+import type { ILogger } from '../../adapters/logger/ILogger';
+
 import { Logger } from '../../adapters/logger/default';
 
 import {
@@ -70,15 +72,18 @@ export interface PluginRegistrationState {
 const _pluginLangLoaded = new WeakMap<Internals, Set<string>>();
 
 /** Build a scoped child logger from the player's configured logger or a fallback. */
-function makePlayerLogger(self: Internals, scope: string): Logger {
+function makePlayerLogger(self: Internals, scope: string): ILogger {
+	// Any ILogger, not only the kit's own class. `child` is on the interface, so
+	// an instanceof check against the concrete Logger throws away a consumer's
+	// implementation and silently sends their plugin logs to a default they
+	// never asked for.
 	const configured = self.options.logger;
-	const root = configured instanceof Logger
-		? configured
-		: new Logger({
-				prefix: 'nmplayer',
-				level: self.options.logLevel,
-			});
-	return root.child(scope) as Logger;
+	const root: ILogger = configured ?? new Logger({
+		prefix: 'nmplayer',
+		level: self.options.logLevel,
+	});
+
+	return root.child(scope);
 }
 
 /**

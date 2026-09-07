@@ -11,7 +11,6 @@ import type { LifecycleRegistry } from '../../adapters/lifecycle-registry/defaul
 import type { ILogger } from '../../adapters/logger/ILogger';
 import type { IRealtimeChannel, RealtimeFactoryOptions } from '../../adapters/realtime/IRealtimeChannel';
 import type { IStorage } from '../../adapters/storage/IStorage';
-import type { Severity } from '../../errors';
 import type {
 	BaseEventMap,
 	BasePlayerConfig,
@@ -219,11 +218,6 @@ export class Plugin<
 	 */
 	static readonly priority: number = 0;
 
-	/**
-	 * Default severity if THIS plugin's `use()` or `initialize()` throws.
-	 * Subclasses override this when the plugin is critical to player behaviour.
-	 */
-	protected static readonly criticalSeverity: Severity = 'warning';
 
 	/**
 	 * Per-error recovery action map. Missing entries fall back to the kit's

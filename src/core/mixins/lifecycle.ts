@@ -942,9 +942,15 @@ function _runSetupPipeline(self: Internals): void {
 			await _runStage(self, 'streamsReady', 'streamsReadyError', () => {
 				// Native registered first so HLS (registered after) wins resolution
 				// when a URL matches both — the registry walks newest-first.
+				// Creating the registry seeds the built-ins. Re-registering here
+				// would splice them out and push them back as the newest entries,
+				// which is exactly how a consumer's pre-setup factory used to lose
+				// its priority.
 				const reg = _ensureStreamRegistry(self);
-				reg.register(nativeFactory);
-				reg.register(hlsFactory);
+				if (!reg.has('native'))
+					reg.register(nativeFactory);
+				if (!reg.has('hls'))
+					reg.register(hlsFactory);
 			});
 			await _runStage(self, 'authReady', 'authReadyError', () => {});
 
