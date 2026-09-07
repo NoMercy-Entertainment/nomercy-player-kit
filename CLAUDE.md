@@ -32,10 +32,11 @@ src/
 
 ## Rules
 
+Shared player-trio architecture — `BasePlayerConfig` field-sharing, the
+subtitle-method placement rule, the plugin event bus, the auto-advance
+asymmetry, and the lint tooling — is documented once in `../PLAYER-TRIO.md`.
+Read it; it is not repeated here.
+
 - Every method here must be identical in behavior for music and video, no domain twist. A branch on "is this music or video" means the method belongs in a per-library player class, not here — pull it back down.
-- `subtitle()` / `subtitles()` / `subtitleStyle()` / `addSubtitleTrack()` / `removeSubtitleTrack()` are NOT on the shared `IPlayer` (`types/player.ts`) — they're a screen-domain concern, declared only on video's `IVideoPlayer` (`nomercy-video-player/src/types.ts`). The core mixin (`core/mixins/media-tracks.ts`) still implements them for both prototypes (avoids duplicating the sidecar-VTT/cue-tracker logic), but the music player's class no longer types them — don't re-add the declaration or an `IPlayer`-level signature for these five. `addSubtitleTrack()` stays generic on purpose — no NoMercy-server/HTTP specifics belong in core; a consumer resolves/downloads a subtitle file however it wants and hands the kit a URL.
-- **Config fields identical across music + video live on `BasePlayerConfig`, never duplicated per-library.** Example precedent: `controls?: boolean` (native `<audio controls>` / `<video controls>`) moved here from `VideoPlayerConfig` once music needed the same flag — video now inherits it instead of redeclaring it. Per-library config (`VideoPlayerConfig`, `MusicPlayerConfig`) is for genuinely domain-specific fields only (`crossfadeDefaults`, `octopus`, `stretching`).
 - Adapters are interfaces with a default impl, swappable via `setup()`. No subclassing to override cross-cutting concerns.
-- Plugins ride the same typed event bus as the per-library packages — `plugin:<id>:<event>`, never a bare core event name.
-- The player lint rules ship as the published `@nomercy-entertainment/eslint-plugin-player` devDependency, consumed by all three repos' `eslint.config.js` alike. The old in-repo `eslint-plugin/` copy was deleted once the standalone shipped to npm — do not re-add it or re-export it from `package.json`; edit rules in the standalone repo and bump the devDependency.
 - Run `npm run typecheck` and `npm test` before committing changes.
