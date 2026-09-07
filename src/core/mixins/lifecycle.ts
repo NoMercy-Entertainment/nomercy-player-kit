@@ -748,8 +748,9 @@ function _wireChapterGapFillOnDuration(self: Internals): void {
 
 /**
  * Re-emit `time` as a throttled `progress` event so consumers can persist
- * watch position without subscribing to a per-frame stream. `time` fires every
- * animation frame; `progress` fires at most every `options.progressIntervalMs`
+ * watch position without subscribing to every update. `time` is emitted from the
+ * backend's `timeupdate` handler, so it arrives several times a second;
+ * `progress` fires at most every `options.progressIntervalMs`
  * (default 5s, set to 0 to disable). The first `time` event after setup
  * always fires `progress` because `_lastProgressEmit` starts at 0.
  */

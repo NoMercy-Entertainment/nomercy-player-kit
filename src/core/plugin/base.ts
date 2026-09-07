@@ -320,8 +320,9 @@ export class Plugin<
 	 * The kit calls `dispose()` when the player itself is disposed, or when the
 	 * plugin is explicitly removed via `player.removePlugin(PluginClass)`. Standard
 	 * listeners, timers, RAF loops, and abort controllers registered through the
-	 * lifecycle helpers are already cleaned up before `dispose()` runs — don't
-	 * re-clean them here.
+	 * lifecycle helpers are released after `dispose()` returns, so they are all
+	 * still live inside it and there is nothing to re-clean here. Reach for this
+	 * only for something the helpers never saw.
 	 */
 	dispose(): void {}
 

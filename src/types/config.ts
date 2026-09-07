@@ -290,7 +290,8 @@ export interface BasePlayerConfig {
 	/**
 	 * How often the player emits `progress` (throttled time updates for
 	 * server-side watch-position persistence, ms). `0` disables. Default 5000.
-	 * Consumers use `progress` instead of `time` to avoid per-frame callback noise.
+	 * Consumers use `progress` instead of `time` when a few callbacks a second is
+	 * more than they need.
 	 */
 	progressIntervalMs?: number;
 

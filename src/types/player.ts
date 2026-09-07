@@ -572,8 +572,11 @@ export interface IPlayer<E extends BaseEventMap<any> = BaseEventMap>
 	networkState(): NetworkState;
 
 	/**
-	 * Active stream factory id (e.g. `'hls'`, `'native'`), or `'idle'` when
-	 * no backend has been initialised yet.
+	 * The backend's own state string, passed through untouched, or `'idle'` when
+	 * no backend has been initialized yet.
+	 *
+	 * Typed `string` rather than an enum because the value is whatever the
+	 * backend reports. Reach for `bufferState()` when you want a typed value.
 	 */
 	streamState(): string;
 
