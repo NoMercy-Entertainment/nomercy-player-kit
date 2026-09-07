@@ -8,8 +8,12 @@
 
 /**
  * Typed event bus contract. Mirrors the `EventEmitter` surface used by both
- * player classes and the plugin base. Consumers that want to inject a custom
- * event bus (e.g. a reactive store event system) implement this interface.
+ * player classes and the plugin base.
+ *
+ * This is a type to write against, not a slot to fill: there is no `eventBus`
+ * setup option and nothing in the kit reads a replacement. Use it to type a
+ * wrapper that forwards events into a store, a fake in a test, or a function
+ * that takes "anything you can listen to" without naming a player.
  */
 export interface IEventBus<E extends Record<string, any> = Record<string, any>> {
 	on<K extends keyof E>(event: K, fn: (data: E[K]) => void): void;
